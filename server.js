@@ -1,70 +1,70 @@
 const express = require("express");
 const path = require("path");
-const fs = require("fs");
 const { Client, handle_file } = require("@gradio/client");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json({ limit: "10mb" }));
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(__dirname));
 
-const MUSETALK_SPACE = "henrybit/musetalk-1-5";
+const MUSETALK = "henrybit/musetalk-1-5";
+const TTS = "remsky/Kokoro-TTS-Zero";
 
-let jobs = new Map();
+const jobs = new Map();
 
 app.get("/api/config", (req, res) => {
   res.json({
     configured: true,
-    provider: "MuseTalk 1.5 ZeroGPU"
+    provider: "Hugging Face ZeroGPU"
   });
 });
 
 app.get("/api/avatars", (req, res) => {
   res.json([
-    { id: "default", name: "Default Avatar" }
+    {
+      id: "default",
+      name: "Default AI Avatar",
+      url: "https://raw.githubusercontent.com/ruhaanmultani74-byte/moodctrl-ai/main/avatar.jpg"
+    }
   ]);
 });
 
 app.get("/api/voices", (req, res) => {
   res.json([
-    { id: "default", name: "Default Voice" }
+    { id: "af_heart", name: "Sarah" },
+    { id: "af_bella", name: "Bella" },
+    { id: "am_adam", name: "Adam" },
+    { id: "am_michael", name: "Michael" }
   ]);
 });
 
 app.post("/api/generate", async (req, res) => {
   const jobId = Date.now().toString();
 
-  try {
-    const {
-      idea,
-      audioUrl,
-      avatarUrl
-    } = req.body;
+  const {
+    idea,
+    avatarUrl,
+    voice = "af_heart"
+  } = req.body;
 
-    if (!audioUrl || !avatarUrl) {
-      return res.status(400).json({
-        error: "audioUrl and avatarUrl are required."
-      });
-    }
-
-    jobs.set(jobId, {
-      status: "processing"
-    });
-
-    res.json({
-      videoId: jobId,
-      status: "processing"
-    });
-
-    processMuseTalk(jobId, audioUrl, avatarUrl);
-
-  } catch (error) {
-    jobs.set(jobId, {
-      status: "error",
-      error: error.message
+  if (!idea || !idea.trim()) {
+    return res.status(400).json({
+      error: "Please enter an idea."
     });
   }
+
+  jobs.set(jobId, {
+    status: "processing",
+    message: "Creating your AI reel..."
+  });
+
+  res.json({
+    videoId: jobId,
+    status: "processing"
+  });
+
+  createReel(jobId, idea.trim(), avatarUrl, voice);
 });
 
 app.get("/api/status/:id", (req, res) => {
@@ -73,69 +73,11 @@ app.get("/api/status/:id", (req, res) => {
   if (!job) {
     return res.status(404).json({
       status: "error",
-      error: "Job not found"
+      error: "Job not found."
     });
   }
 
   res.json(job);
 });
 
-async function processMuseTalk(jobId, audioUrl, avatarUrl) {
-  try {
-    const client = await Client.connect(MUSETALK_SPACE);
-
-    const audio = handle_file(audioUrl);
-    const avatar = handle_file(avatarUrl);
-
-    const result = await client.predict("/generate", [
-      audio,
-      avatar,
-      0,
-      10,
-      "jaw",
-      90,
-      90
-    ]);
-
-    const output = result.data?.[0];
-
-    if (!output) {
-      throw new Error("MuseTalk did not return a video.");
-    }
-
-    let videoUrl;
-
-    if (typeof output === "string") {
-      videoUrl = output;
-    } else if (output.url) {
-      videoUrl = output.url;
-    } else if (output.path) {
-      videoUrl = output.path;
-    }
-
-    if (!videoUrl) {
-      throw new Error("Could not read the generated video URL.");
-    }
-
-    jobs.set(jobId, {
-      status: "created",
-      video_url: videoUrl
-    });
-
-  } catch (error) {
-    console.error("MuseTalk error:", error);
-
-    jobs.set(jobId, {
-      status: "error",
-      error: error.message || "MuseTalk generation failed."
-    });
-  }
-}
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
-
-app.listen(PORT, () => {
-  console.log(`MOODCTRL AI running on port ${PORT}`);
-});
+async
