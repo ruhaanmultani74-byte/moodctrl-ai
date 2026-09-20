@@ -1,86 +1,615 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MOODCTRL AI — Talking Reel Studio</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;background:#07080d;color:#fff;font-family:Inter,system-ui,Arial}
-header{height:68px;border-bottom:1px solid #242936;display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:#090a0eee;backdrop-filter:blur(16px);position:sticky;top:0;z-index:5}
-.logo{font-weight:950;letter-spacing:1px}.logo b{color:#a78bfa}.badge{font-size:11px;color:#c4b5fd;border:1px solid #40355c;padding:7px 10px;border-radius:99px}
-main{max-width:1120px;margin:auto;padding:30px 18px}.hero h1{font-size:36px;margin:0 0 7px}.hero p{color:#9da5b5;margin:0 0 24px}
-.grid{display:grid;grid-template-columns:1fr 390px;gap:17px}.card{background:#10131a;border:1px solid #252b38;border-radius:18px;padding:19px}
-h2{font-size:16px;margin:0 0 14px}label{display:block;font-size:12px;color:#aab2c0;margin:13px 0 6px}
-input,select,textarea{width:100%;background:#080a0f;border:1px solid #2a303d;color:#fff;border-radius:10px;padding:11px;font:inherit}textarea{min-height:95px;resize:vertical}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{border:1px solid #2a303d;background:#0b0e13;color:#bac2d0;border-radius:9px;padding:8px 10px;font-size:11px;cursor:pointer}.chip.active{background:#24183e;border-color:#8b5cf6;color:#fff}
-button{border:0;border-radius:11px;padding:13px 15px;font-weight:850;color:#fff;cursor:pointer}.go{width:100%;margin-top:17px;background:linear-gradient(90deg,#8b5cf6,#ec4899)}.secondary{width:100%;margin-top:10px;background:#171b24;border:1px solid #2a303d}
-#player{aspect-ratio:9/16;border-radius:16px;border:1px solid #2a303d;background:#05060a;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}video{width:100%;height:100%;object-fit:cover}
-.status{display:none;margin-top:14px;padding:12px;border:1px solid #2a303d;border-radius:11px;background:#090c11}.bar{height:6px;background:#252a35;border-radius:99px;overflow:hidden;margin-top:9px}.fill{height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#ec4899)}
-.note{font-size:11px;color:#7f899a;line-height:1.5;margin-top:11px}.err{color:#fca5a5}.ok{color:#86efac}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#07080d;
+  color:#fff;
+  font-family:Inter,system-ui,Arial;
+}
+
+header{
+  height:68px;
+  border-bottom:1px solid #242936;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
+  background:#090a0e;
+  position:sticky;
+  top:0;
+  z-index:5;
+}
+
+.logo{
+  font-weight:950;
+  letter-spacing:1px;
+}
+
+.logo b{
+  color:#a78bfa;
+}
+
+.badge{
+  font-size:11px;
+  color:#c4b5fd;
+  border:1px solid #40355c;
+  padding:7px 10px;
+  border-radius:99px;
+}
+
+main{
+  max-width:1120px;
+  margin:auto;
+  padding:30px 18px;
+}
+
+.hero h1{
+  font-size:36px;
+  margin:0 0 7px;
+}
+
+.hero p{
+  color:#9da5b5;
+  margin:0 0 24px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 390px;
+  gap:17px;
+}
+
+.card{
+  background:#10131a;
+  border:1px solid #252b38;
+  border-radius:18px;
+  padding:19px;
+}
+
+h2{
+  font-size:16px;
+  margin:0 0 14px;
+}
+
+label{
+  display:block;
+  font-size:12px;
+  color:#aab2c0;
+  margin:13px 0 6px;
+}
+
+input,select,textarea{
+  width:100%;
+  background:#080a0f;
+  border:1px solid #2a303d;
+  color:#fff;
+  border-radius:10px;
+  padding:11px;
+  font:inherit;
+}
+
+textarea{
+  min-height:95px;
+  resize:vertical;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.chips{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+
+.chip{
+  border:1px solid #2a303d;
+  background:#0b0e13;
+  color:#bac2d0;
+  border-radius:9px;
+  padding:8px 10px;
+  font-size:11px;
+  cursor:pointer;
+}
+
+.chip.active{
+  background:#24183e;
+  border-color:#8b5cf6;
+  color:#fff;
+}
+
+button{
+  border:0;
+  border-radius:11px;
+  padding:13px 15px;
+  font-weight:850;
+  color:#fff;
+  cursor:pointer;
+}
+
+.go{
+  width:100%;
+  margin-top:17px;
+  background:linear-gradient(90deg,#8b5cf6,#ec4899);
+}
+
+.secondary{
+  width:100%;
+  margin-top:10px;
+  background:#171b24;
+  border:1px solid #2a303d;
+}
+
+#player{
+  aspect-ratio:9/16;
+  border-radius:16px;
+  border:1px solid #2a303d;
+  background:#05060a;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  overflow:hidden;
+}
+
+video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.status{
+  display:none;
+  margin-top:14px;
+  padding:12px;
+  border:1px solid #2a303d;
+  border-radius:11px;
+  background:#090c11;
+}
+
+.bar{
+  height:6px;
+  background:#252a35;
+  border-radius:99px;
+  overflow:hidden;
+  margin-top:9px;
+}
+
+.fill{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,#8b5cf6,#ec4899);
+}
+
+.note{
+  font-size:11px;
+  color:#7f899a;
+  line-height:1.5;
+  margin-top:11px;
+}
+
+.err{
+  color:#fca5a5;
+}
+
+.ok{
+  color:#86efac;
+}
+
+@media(max-width:800px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .hero h1{
+    font-size:29px;
+  }
+}
 </style>
 </head>
+
 <body>
-<header><div class="logo">MOODCTRL <b>AI</b></div><div class="badge">TALKING REEL STUDIO</div></header>
+
+<header>
+  <div class="logo">MOODCTRL <b>AI</b></div>
+  <div class="badge">TALKING REEL STUDIO</div>
+</header>
+
 <main>
-<div class="hero"><h1>Generate a real talking-AI Reel.</h1><p>Enter an idea → choose an AI presenter → generate a real 9:16 MP4.</p></div>
+
+<div class="hero">
+  <h1>Generate a real talking-AI Reel.</h1>
+  <p>Enter an idea → choose your AI presenter → generate your Reel.</p>
+</div>
+
 <div class="grid">
+
 <section class="card">
+
 <h2>1. What should the Reel be about?</h2>
+
 <label>Category</label>
+
 <div class="chips" id="cats">
-<span class="chip active" data-v="Fun Fact">🤯 Fun Fact</span><span class="chip" data-v="Funny">😂 Funny</span><span class="chip" data-v="Mystery">🕵️ Mystery</span><span class="chip" data-v="Space">🚀 Space</span><span class="chip" data-v="Animals">🐾 Animals</span><span class="chip" data-v="Science">🧠 Science</span><span class="chip" data-v="Gaming">🎮 Gaming</span><span class="chip" data-v="Business">💰 Business</span><span class="chip" data-v="Podcast">🎙️ Podcast</span>
+
+<span class="chip active" data-v="Fun Fact">🤯 Fun Fact</span>
+<span class="chip" data-v="Funny">😂 Funny</span>
+<span class="chip" data-v="Mystery">🕵️ Mystery</span>
+<span class="chip" data-v="Space">🚀 Space</span>
+<span class="chip" data-v="Animals">🐾 Animals</span>
+<span class="chip" data-v="Science">🧠 Science</span>
+<span class="chip" data-v="Gaming">🎮 Gaming</span>
+<span class="chip" data-v="Business">💰 Business</span>
+<span class="chip" data-v="Podcast">🎙️ Podcast</span>
+
 </div>
-<label>Idea</label><textarea id="topic" placeholder="Example: 5 crazy facts about the ocean"></textarea>
-<div class="row"><div><label>Length</label><select id="seconds"><option value="15">15 sec</option><option value="30">30 sec</option><option value="60" selected>60 sec</option><option value="90">90 sec</option><option value="120">2 min</option></select></div><div><label>Language</label><select id="language"><option>English</option><option>Hinglish</option><option>Hindi</option></select></div></div>
+
+<label>Idea</label>
+
+<textarea
+id="topic"
+placeholder="Example: 5 crazy facts about the ocean">
+</textarea>
+
+<div class="row">
+
+<div>
+<label>Length</label>
+
+<select id="seconds">
+<option value="15">15 sec</option>
+<option value="30">30 sec</option>
+<option value="60" selected>60 sec</option>
+<option value="90">90 sec</option>
+<option value="120">2 min</option>
+</select>
+</div>
+
+<div>
+<label>Language</label>
+
+<select id="language">
+<option value="English">English</option>
+<option value="Hinglish">Hinglish</option>
+<option value="Hindi">Hindi</option>
+</select>
+</div>
+
+</div>
+
 <h2 style="margin-top:22px">2. AI presenter</h2>
-<div class="row"><div><label>Avatar</label><select id="avatar"><option>Loading avatars…</option></select></div><div><label>Voice</label><select id="voice"><option>Loading voices…</option></select></div></div>
-<label>Expression</label><select id="emotion"><option value="cheerful">Cheerful</option><option value="news">News</option><option value="marketing">Energetic</option></select>
-<button class="go" id="generate">🎬 GENERATE REAL AI REEL</button>
-<div class="status" id="status"><b id="st">Preparing…</b><div class="bar"><div class="fill" id="fill"></div></div><div class="note" id="sub"></div></div>
-<div class="note" id="config">Checking the secure video backend…</div>
-</section>
-<section class="card">
-<h2>Finished Reel</h2>
-<div id="player"><div><b>Your generated video will appear here.</b><div class="note">The output is a real provider-rendered talking-avatar video.</div></div></div>
-<button class="secondary" id="open" style="display:none">▶ Open / Download MP4</button>
-</section>
+
+<div class="row">
+
+<div>
+<label>Avatar</label>
+
+<select id="avatar">
+<option value="default">Default AI Avatar</option>
+</select>
 </div>
+
+<div>
+<label>Voice</label>
+
+<select id="voice">
+<option value="af_heart">Sarah</option>
+<option value="af_bella">Bella</option>
+<option value="am_adam">Adam</option>
+<option value="am_michael">Michael</option>
+</select>
+</div>
+
+</div>
+
+<label>Expression</label>
+
+<select id="emotion">
+<option value="cheerful">Cheerful</option>
+<option value="news">News</option>
+<option value="marketing">Energetic</option>
+</select>
+
+<button class="go" id="generate">
+🎬 GENERATE REAL AI REEL
+</button>
+
+<div class="status" id="status">
+
+<b id="st">Preparing…</b>
+
+<div class="bar">
+<div class="fill" id="fill"></div>
+</div>
+
+<div class="note" id="sub"></div>
+
+</div>
+
+<div class="note" id="config">
+Checking AI backend…
+</div>
+
+</section>
+
+<section class="card">
+
+<h2>Finished Reel</h2>
+
+<div id="player">
+
+<div>
+<b>Your generated video will appear here.</b>
+
+<div class="note">
+The AI-generated talking video will appear here after processing.
+</div>
+
+</div>
+
+</div>
+
+<button
+class="secondary"
+id="open"
+style="display:none">
+▶ Open / Download MP4
+</button>
+
+</section>
+
+</div>
+
 </main>
+
 <script>
-let category="Fun Fact", avatars=[], voices=[], videoUrl="";
-document.querySelectorAll("#cats .chip").forEach(c=>c.onclick=()=>{document.querySelectorAll("#cats .chip").forEach(x=>x.classList.remove("active"));c.classList.add("active");category=c.dataset.v});
-const $=id=>document.getElementById(id);
-async function load(){
-try{
-let cfg=await (await fetch("/api/config")).json();
-$("config").innerHTML=cfg.configured?'<span class="ok">✓ Secure backend connected. API key is server-side.</span>':'<span class="err">Backend is running, but the provider API key has not been configured yet.</span>';
-if(!cfg.configured)return;
-let [a,v]=await Promise.all([fetch("/api/avatars").then(r=>r.json()),fetch("/api/voices").then(r=>r.json())]);
-avatars=a?.data||a?.avatars||[]; voices=v?.data||v?.voices||[];
-$("avatar").innerHTML=avatars.map(x=>`<option value="${x.avatar_id||x.id}">${x.name||x.avatar_id||x.id}</option>`).join("")||"<option value=''>No avatars returned</option>";
-$("voice").innerHTML=voices.map(x=>`<option value="${x.voice_id||x.id}">${x.name||x.voice_id||x.id}</option>`).join("")||"<option value=''>No voices returned</option>";
-}catch(e){$("config").innerHTML='<span class="err">Could not reach the backend.</span>'}
+
+let category = "Fun Fact";
+let videoUrl = "";
+
+const $ = id => document.getElementById(id);
+
+document.querySelectorAll("#cats .chip").forEach(chip => {
+
+  chip.onclick = () => {
+
+    document
+      .querySelectorAll("#cats .chip")
+      .forEach(x => x.classList.remove("active"));
+
+    chip.classList.add("active");
+
+    category = chip.dataset.v;
+
+  };
+
+});
+
+
+async function loadBackend(){
+
+  try{
+
+    const response = await fetch("/api/config");
+
+    const config = await response.json();
+
+    if(config.configured){
+
+      $("config").innerHTML =
+        '<span class="ok">✓ AI backend connected.</span>';
+
+    }else{
+
+      $("config").innerHTML =
+        '<span class="err">AI backend is not configured.</span>';
+
+    }
+
+  }catch(error){
+
+    $("config").innerHTML =
+      '<span class="err">Could not connect to AI backend.</span>';
+
+  }
+
 }
+
+
 async function generate(){
-$("status").style.display="block";$("st").textContent="Submitting to AI video engine…";$("fill").style.width="10%";
-try{
-let r=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
-category,topic:$("topic").value,language:$("language").value,seconds:+$("seconds").value,
-avatarId:$("avatar").value,voiceId:$("voice").value,emotion:$("emotion").value})});
-let j=await r.json();if(!r.ok)throw new Error(j.error||"Generation failed");
-let id=j.videoId;$("sub").textContent="AI avatar video is rendering. This can take several minutes.";
-let start=Date.now();
-while(Date.now()-start<10*60*1000){
-await new Promise(r=>setTimeout(r,5000));
-let s=await fetch("/api/status/"+encodeURIComponent(id)).then(r=>r.json());
-let d=s?.data||s;
-if(d.status==="created"&&d.video_url){videoUrl=d.video_url;$("player").innerHTML=`<video src="${videoUrl}" controls playsinline></video>`;$("open").style.display="block";$("open").onclick=()=>window.open(videoUrl,"_blank");$("st").textContent="REAL AI REEL READY ✓";$("fill").style.width="100%";$("sub").textContent="The provider returned the finished MP4.";return}
-if(d.status==="failed")throw new Error(d.error||"Provider generation failed");
-let p=d.status==="creating"?55:25;$("fill").style.width=p+"%";$("st").textContent=d.status==="creating"?"Creating your talking AI video…":"Waiting for the render queue…";
+
+  const idea = $("topic").value.trim();
+
+  if(!idea){
+
+    alert("Please enter an idea first.");
+
+    return;
+
+  }
+
+
+  $("status").style.display = "block";
+
+  $("st").textContent = "Starting AI generation…";
+
+  $("fill").style.width = "10%";
+
+  $("sub").textContent =
+    "Creating your AI voice and talking-avatar video…";
+
+
+  try{
+
+    const response = await fetch("/api/generate",{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+        idea:idea,
+
+        voice:$("voice").value,
+
+        avatarUrl:null,
+
+        category:category,
+
+        language:$("language").value,
+
+        seconds:Number($("seconds").value),
+
+        emotion:$("emotion").value
+
+      })
+
+    });
+
+
+    const data = await response.json();
+
+
+    if(!response.ok){
+
+      throw new Error(
+        data.error || "AI generation failed."
+      );
+
+    }
+
+
+    const jobId = data.videoId;
+
+
+    $("st").textContent =
+      "AI is generating your Reel…";
+
+    $("fill").style.width = "25%";
+
+
+    const start = Date.now();
+
+
+    while(Date.now() - start < 10 * 60 * 1000){
+
+      await new Promise(
+        resolve => setTimeout(resolve,5000)
+      );
+
+
+      const statusResponse =
+        await fetch(
+          "/api/status/" +
+          encodeURIComponent(jobId)
+        );
+
+
+      const statusData =
+        await statusResponse.json();
+
+
+      if(statusData.status === "created"
+         && statusData.video_url){
+
+        videoUrl =
+          statusData.video_url;
+
+
+        $("player").innerHTML =
+
+          `<video
+             src="${videoUrl}"
+             controls
+             playsinline>
+           </video>`;
+
+
+        $("open").style.display = "block";
+
+
+        $("open").onclick = () =>
+          window.open(videoUrl,"_blank");
+
+
+        $("st").textContent =
+          "REAL AI REEL READY ✓";
+
+
+        $("fill").style.width =
+          "100%";
+
+
+        $("sub").textContent =
+          "Your talking-avatar video is ready.";
+
+        return;
+
+      }
+
+
+      if(statusData.status === "error"){
+
+        throw new Error(
+          statusData.error ||
+          "AI generation failed."
+        );
+
+      }
+
+
+      $("fill").style.width = "50%";
+
+      $("st").textContent =
+        statusData.message ||
+        "AI is processing your Reel…";
+
+    }
+
+
+    throw new Error(
+      "Generation is taking longer than expected."
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    $("st").textContent =
+      "Generation failed";
+
+    $("fill").style.width = "0%";
+
+    $("sub").innerHTML =
+      '<span class="err">' +
+      error.message +
+      '</span>';
+
+  }
+
 }
-throw new Error("Generation took longer than 10 minutes. Check the provider dashboard for the job.");
-}catch(e){$("st").textContent="Generation failed";$("sub").innerHTML='<span class="err">'+e.message+'</span>'}
-}
-$("generate").onclick=generate;load();
+
+
+$("generate").onclick = generate;
+
+loadBackend();
+
 </script>
+
 </body>
 </html>
